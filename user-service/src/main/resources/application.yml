@@ -1,0 +1,37 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  data:
+    redis:
+      host: redis
+
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: user-profile-consumers
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.abhir.chat.user.dto
+        spring.json.value.default.type: com.abhir.chat.user.dto.UserCreatedEvent
+
+jwt:
+  secret: my_super_secret_jwt_key_1234567890!
+  expiration: 3600000
+
+logging:
+  level:
+    org.springframework: INFO
