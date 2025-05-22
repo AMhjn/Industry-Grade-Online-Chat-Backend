@@ -33,6 +33,12 @@ public class UserController {
 
     @GetMapping("/status/{username}")
     public ResponseEntity<String> getUserStatus(@PathVariable String username) {
+        // First: check if user exists
+        if (!userService.existsByUsername(username)) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        // Then: check presence
         boolean isOnline = presenceService.isOnline(username);
         return ResponseEntity.ok(isOnline ? "online" : "offline");
     }

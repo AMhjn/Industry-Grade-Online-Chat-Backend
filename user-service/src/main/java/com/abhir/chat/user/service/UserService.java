@@ -14,6 +14,11 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    public boolean existsByUsername(String username) {
+        return userRepository.findByUsername(username).isPresent();
+    }
+
+
     public UserResponse getCurrentUserProfile() {
         String username = getAuthenticatedUsername();
         User user = userRepository.findByUsername(username)

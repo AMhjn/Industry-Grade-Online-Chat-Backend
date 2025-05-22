@@ -34,9 +34,10 @@ services:
     command: >
       "
       echo '⏳ Waiting for Kafka to be ready...' &&
-      cub kafka-ready -b kafka:9092 1 20 &&
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic user.created --partitions 1 --replication-factor 1 &&
-      echo '✅ Kafka topic user.created created'
+        cub kafka-ready -b kafka:9092 1 20 &&
+        kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic user.created --partitions 1 --replication-factor 1 &&
+        kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic message.sent --partitions 1 --replication-factor 1 &&
+        echo '✅ Kafka topics created'
       "
 
   auth-service:
@@ -72,6 +73,22 @@ services:
       SPRING_DATASOURCE_PASSWORD: abhir
       SPRING_REDIS_HOST: redis
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+  message-service:
+    build:
+      context: ./message-service
+    container_name: message-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - kafka-init
+      - redis
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/chat_message_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: abhir
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
 
 volumes:
   mysql_data:
