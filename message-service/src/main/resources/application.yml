@@ -17,6 +17,18 @@ spring:
   kafka:
     bootstrap-servers: kafka:9092
 
+  redis:
+    host: redis
+    port: 6379
+
+    cache:
+      type: redis
+
 jwt:
   secret: my_super_secret_jwt_key_1234567890!
   expiration: 3600000
+
+logging:
+  level:
+    org.springframework.cache: DEBUG
+

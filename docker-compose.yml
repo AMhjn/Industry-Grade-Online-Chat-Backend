@@ -83,6 +83,7 @@ services:
     depends_on:
       - kafka-init
       - redis
+      - kafka
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/chat_message_db
       SPRING_DATASOURCE_USERNAME: root

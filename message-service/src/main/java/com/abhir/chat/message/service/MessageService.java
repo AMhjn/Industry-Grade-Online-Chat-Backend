@@ -6,6 +6,8 @@ import com.abhir.chat.message.dto.SendMessageRequest;
 import com.abhir.chat.message.entity.Message;
 import com.abhir.chat.message.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final KafkaTemplate<String, MessageSentEvent> kafkaTemplate;
 
+    @CacheEvict(value = "messages", key = "#root.methodName + ':' + #request.recipient + ':' + T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
     public void sendMessage(SendMessageRequest request) {
         String sender = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -45,7 +48,7 @@ public class MessageService {
         kafkaTemplate.send("message.sent", event);
     }
 
-
+    @Cacheable(value = "messages", key = "#root.methodName + ':' + #user + ':' + T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName()")
     public List<MessageResponse> getMessagesWith(String user) {
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 
